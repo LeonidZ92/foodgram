@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from foodgram import constants
 from recipes.models import Ingredient, Recipe, Tag
+from foodgram import constants
 
 
 class RecipeIngredientsInLine(admin.TabularInline):

@@ -15,8 +15,8 @@ class User(AbstractUser):
         null=False,
         validators=[RegexValidator(
             regex=r'^[\w.@+-]+$',
-            message='Username contains restricted symbols. Please use only '
-                    'letters, numbers and .@+- symbols',
+            message='Имя пользователя содержит запрещенные символы.'
+                    'Используйте только буквы, цифры и символы .@+-',
         ), ],
         verbose_name='Уникальное имя пользователя',
     )
