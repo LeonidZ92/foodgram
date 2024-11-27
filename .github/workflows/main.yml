@@ -122,6 +122,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "docker-compose.production.yml"
           target: "foodgram"
+          overwrite: true
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
@@ -134,7 +135,7 @@ jobs:
             sudo npm cache clean --force
             sudo apt clean
             sudo journalctl --vacuum-time=1d
-            cd /home/foodgram
+            cd foodgram
             sudo docker compose -f infra/docker-compose.production.yml pull
             sudo docker compose -f infra/docker-compose.production.yml down
             sudo docker compose -f infra/docker-compose.production.yml up -d
