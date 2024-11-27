@@ -113,7 +113,7 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v4
-    - name: Copy docker-compose.yml via ssh
+    - name: Copy docker-compose.production.yml via ssh
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.HOST }}
@@ -121,7 +121,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: "docker-compose.production.yml"
-        target: "foodgram"
+        target: "/home/foodgram"
     - name: Executing remote ssh commands to deploy
       uses: appleboy/ssh-action@master
       with:
@@ -134,7 +134,7 @@ jobs:
           sudo npm cache clean --force
           sudo apt clean
           sudo journalctl --vacuum-time=1d
-          cd foodgram
+          cd /home/foodgram
           sudo docker compose -f infra/docker-compose.production.yml pull
           sudo docker compose -f infra/docker-compose.production.yml down
           sudo docker compose -f infra/docker-compose.production.yml up -d
