@@ -130,18 +130,18 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-          sudo docker system prune -af
-          sudo npm cache clean --force
-          sudo apt clean
-          sudo journalctl --vacuum-time=1d
-          cd /home/foodgram
-          sudo docker compose -f infra/docker-compose.production.yml pull
-          sudo docker compose -f infra/docker-compose.production.yml down
-          sudo docker compose -f infra/docker-compose.production.yml up -d
-          sudo docker compose -f infra/docker-compose.production.yml exec backend python manage.py migrate
-          sudo docker compose -f infra/docker-compose.production.yml exec backend python manage.py collectstatic
-          sudo docker compose -f infra/docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
-          sudo docker compose -f infra/docker-compose.production.yml exec backend python manage.py import_data
+            sudo docker system prune -af
+            sudo npm cache clean --force
+            sudo apt clean
+            sudo journalctl --vacuum-time=1d
+            cd /home/foodgram
+            sudo docker compose -f infra/docker-compose.production.yml pull
+            sudo docker compose -f infra/docker-compose.production.yml down
+            sudo docker compose -f infra/docker-compose.production.yml up -d
+            sudo docker compose -f infra/docker-compose.production.yml exec backend python manage.py migrate
+            sudo docker compose -f infra/docker-compose.production.yml exec backend python manage.py collectstatic
+            sudo docker compose -f infra/docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
+            sudo docker compose -f infra/docker-compose.production.yml exec backend python manage.py import_data
 
   send_message:
     runs-on: ubuntu-latest
