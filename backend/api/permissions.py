@@ -2,7 +2,7 @@ from rest_framework import permissions
 
 
 class IsAdminAuthorOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
-    message = 'Доступ запрещен'
+    message = "Доступ запрещен"
 
     def has_object_permission(self, request, view, obj):
         return (

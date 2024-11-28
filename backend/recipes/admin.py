@@ -16,21 +16,21 @@ class RecipeTagsInLine(admin.TabularInline):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'measurement_unit')
-    search_fields = ('name',)
-    empty_value_display = '-пусто-'
+    list_display = ("id", "name", "measurement_unit")
+    search_fields = ("name",)
+    empty_value_display = "-пусто-"
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'text', 'author')
-    search_fields = ('name', 'author')
+    list_display = ("id", "name", "text", "author")
+    search_fields = ("name", "author")
     inlines = (RecipeIngredientsInLine, RecipeTagsInLine)
-    empty_value_display = '-пусто-'
+    empty_value_display = "-пусто-"
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'slug')
-    search_fields = ('name',)
-    empty_value_display = '-пусто-'
+    list_display = ("id", "name", "slug")
+    search_fields = ("name",)
+    empty_value_display = "-пусто-"
