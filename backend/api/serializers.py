@@ -126,13 +126,15 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             "cooking_time",
         )
 
+    def is_user_related_to_recipe(self, obj, model_class):
+        user = self.context.get("request")
+        return model_class.objects.filter(recipe=obj, user=user.user).exists()
+
     def get_is_favorited(self, obj):
-        user = self.context.get("request").user
-        return Favorite.objects.filter(recipe=obj, user=user).exists()
+        return self.is_user_related_to_recipe(obj, Favorite)
 
     def get_is_in_shopping_cart(self, obj):
-        user = self.context.get("request").user
-        return ShoppingList.objects.filter(recipe=obj, user=user).exists()
+        return self.is_user_related_to_recipe(obj, ShoppingList)
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
