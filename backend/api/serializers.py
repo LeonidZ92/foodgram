@@ -292,6 +292,9 @@ class SubscriberDetailSerializer(serializers.ModelSerializer):
             context={"request": request},
         ).data
 
+    def get_recipes_count(self, obj):
+        return Recipe.objects.filter(author=obj.author).count()
+
 
 class SubscriberSerializer(serializers.ModelSerializer):
 
