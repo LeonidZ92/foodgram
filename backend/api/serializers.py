@@ -103,11 +103,11 @@ class RecipeIngredientWriteSerializer(serializers.ModelSerializer):
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
-
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
     ingredients = RecipeIngredientSerializer(
-        source="ingredient_list", many=True
+        source='ingredient_list',
+        many=True
     )
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -128,11 +128,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         )
 
     def check_user_status(self, obj, model_class):
-        user = self.context.get("request")
-        return bool(
-            user
-            and model_class.objects.filter(recipe=obj, user=user.user).exists()
-        )
+        user = self.context.get("request").user
+        return model_class.objects.filter(recipe=obj, user=user).exists()
 
     def get_is_favorited(self, obj):
         return self.check_user_status(obj, Favorite)

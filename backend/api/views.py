@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied
 from django.db.models import Sum
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect
@@ -157,6 +158,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filterset_class = RecipeFilter
     queryset = Recipe.objects.all()
 
+    def check_authentication(self, request):
+        if not request.user.is_authenticated:
+            raise PermissionDenied(
+                "Требуется аутентификация для выполнения этого действия."
+            )
+
     def get_serializer_class(self):
         if self.action in ("list", "retrieve", "get-link"):
             return RecipeReadSerializer
@@ -185,6 +192,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name="shopping_cart",
     )
     def shopping_cart(self, request, pk):
+        self.check_authentication(request)
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == "POST":
@@ -248,6 +256,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name="favorite",
     )
     def favorite(self, request, pk):
+        self.check_authentication(request)
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == "POST":
