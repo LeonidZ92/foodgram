@@ -97,9 +97,9 @@ class CustomUserViewSet(UserViewSet):
     )
     def subscribe(self, request, id):
         user = request.user
-        author = get_object_or_404(User, id=id)
 
         if self.request.method == "POST":
+            author = get_object_or_404(User, id=id)
             if user == author:
                 return Response(
                     {"errors": "Вы не можете подписаться на себя"},
@@ -121,13 +121,19 @@ class CustomUserViewSet(UserViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         elif self.request.method == "DELETE":
+            if not User.objects.filter(id=id).exists():
+                return Response(
+                    {"errors": "Пользователь с данным ID не найден"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
             deleted_count, _ = Subscription.objects.filter(
                 user=user, author_id=id
             ).delete()
 
             if deleted_count == 0:
                 return Response(
-                    {"errors": "Вы не подписаны на этого пользователя"},
+                    {"errors": "Вы не подписаны на данного пользователя"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
