@@ -107,8 +107,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
     ingredients = RecipeIngredientSerializer(
-        source='ingredient_list',
-        many=True
+        source="ingredient_list", many=True
     )
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -116,25 +115,23 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id',
-            'tags',
-            'author',
-            'ingredients',
-            'is_favorited',
-            'is_in_shopping_cart',
-            'name',
-            'image',
-            'text',
-            'cooking_time',
+            "id",
+            "tags",
+            "author",
+            "ingredients",
+            "is_favorited",
+            "is_in_shopping_cart",
+            "name",
+            "image",
+            "text",
+            "cooking_time",
         )
 
     def check_user_status(self, obj, model_class):
-        user = self.context.get('request')
+        user = self.context.get("request")
         return bool(
             user
-            and user.user.is_authenticated
-            and model_class.objects.filter(recipe=obj,
-                                           user=user.user).exists()
+            and model_class.objects.filter(recipe=obj, user=user.user).exists()
         )
 
     def get_is_favorited(self, obj):
