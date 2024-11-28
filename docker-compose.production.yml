@@ -6,6 +6,7 @@ volumes:
 services:
   db:
     image: postgres:13
+    restart: always
     volumes:
       - pg:/var/lib/postgresql/data/
     env_file:
@@ -13,6 +14,7 @@ services:
 
   backend:
     image: leonidz92/foodgram_backend
+    restart: always
     volumes:
       - static:/backend_static/
       - media:/app/media/
@@ -31,6 +33,7 @@ services:
 
   gateway:
     image: leonidz92/foodgram_gateway
+    restart: always
     ports:
       - "9090:80"
     volumes:
