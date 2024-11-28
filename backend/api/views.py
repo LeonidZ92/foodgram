@@ -155,9 +155,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = CustomLimitPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    queryset = Recipe.objects.select_related("author").prefetch_related(
-        "tags", "ingredients__ingredient"
-    )
+    queryset = Recipe.objects.all()
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve", "get-link"):
