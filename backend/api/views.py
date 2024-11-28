@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Sum
+from django.db.models import Count, Sum
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_GET
@@ -84,7 +84,9 @@ class CustomUserViewSet(UserViewSet):
     )
     def subscriptions(self, request):
         user = request.user
-        queryset = user.follower.all()
+        queryset = User.objects.filter(following__user=user).annotate(
+            recipes_count=Count("recipes")
+        )
         pages = self.paginate_queryset(queryset)
         serializer = SubscriberDetailSerializer(
             pages, many=True, context={"request": request}

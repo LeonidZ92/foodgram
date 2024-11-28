@@ -254,7 +254,7 @@ class SubscriberDetailSerializer(serializers.ModelSerializer):
     last_name = serializers.ReadOnlyField(source="author.last_name")
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
+    recipes_count = serializers.IntegerField(read_only=True)
     avatar = Base64ImageField(source="author.avatar")
 
     class Meta:
@@ -291,9 +291,6 @@ class SubscriberDetailSerializer(serializers.ModelSerializer):
             many=True,
             context={"request": request},
         ).data
-
-    def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj.author).count()
 
 
 class SubscriberSerializer(serializers.ModelSerializer):
