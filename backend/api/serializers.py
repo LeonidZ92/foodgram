@@ -254,7 +254,7 @@ class SubscriberDetailSerializer(serializers.ModelSerializer):
     last_name = serializers.ReadOnlyField(source="author.last_name")
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.IntegerField(read_only=True)
+    recipes_count = serializers.SerializerMethodField()
     avatar = Base64ImageField(source="author.avatar")
 
     class Meta:
