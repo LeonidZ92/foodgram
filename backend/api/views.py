@@ -122,8 +122,14 @@ class CustomUserViewSet(UserViewSet):
                 context={"request": request},
             )
             serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            subscription = serializer.save()
+
+            recipes_count = Recipe.objects.filter(author=author).count()
+            response_data = SubscriberDetailSerializer(
+                subscription,
+                context={"request": request},
+            ).data
+            response_data["recipes_count"] = recipes_count
 
         elif self.request.method == "DELETE":
             if not User.objects.filter(id=id).exists():
