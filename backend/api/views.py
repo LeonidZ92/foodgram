@@ -85,7 +85,7 @@ class CustomUserViewSet(UserViewSet):
     def subscriptions(self, request):
         user = request.user
         queryset = (
-            User.objects.filter(following__user=user)
+            User.objects.filter(follower__user=user)
             .prefetch_related("recipes")
             .annotate(recipes_count=Count("recipes"))
         )
