@@ -8,6 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import NotAuthenticated
 from rest_framework.permissions import (
     AllowAny,
     IsAuthenticated,
@@ -179,34 +180,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeReadSerializer
         return RecipeWriteSerializer
 
-    def get_queryset(self):
-        queryset = (
-            super().get_queryset()
-            .annotate(
-                is_favorited=Exists(
-                    Favorite.objects.filter(
-                        recipe_id=OuterRef("id"), user=self.request.user
-                    )
-                ),
-                is_in_shopping_cart=Exists(
-                    ShoppingList.objects.filter(
-                        recipe_id=OuterRef("id"), user=self.request.user
-                    )
-                ),
-            )
-        )
-        return queryset
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context.update(
-            {
-                "is_favorited": self.request.user.is_authenticated,
-                "is_in_shopping_cart": self.request.user.is_authenticated,
-            }
-        )
-        return context
-
     @action(
         detail=True,
         methods=["GET"],
@@ -230,6 +203,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name="shopping_cart",
     )
     def shopping_cart(self, request, pk):
+        if not request.user.is_authenticated:
+            raise NotAuthenticated(
+                "Требуется аутентификация для выполнения этого действия."
+            )
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == "POST":
@@ -293,6 +270,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name="favorite",
     )
     def favorite(self, request, pk):
+        if not request.user.is_authenticated:
+            raise NotAuthenticated(
+                "Требуется аутентификация для выполнения этого действия."
+            )
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == "POST":

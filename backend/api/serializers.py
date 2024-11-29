@@ -6,9 +6,11 @@ from drf_extra_fields.fields import Base64ImageField
 
 from foodgram import constants
 from recipes.models import (
+    Favorite,
     Ingredient,
     Recipe,
     RecipeIngredient,
+    ShoppingList,
     Tag,
 )
 from users.models import Subscription
@@ -105,11 +107,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
     ingredients = RecipeIngredientSerializer(
-        source='ingredient_list',
-        many=True
+        source="ingredient_list", many=True
     )
-    is_favorited = serializers.BooleanField(read_only=True)
-    is_in_shopping_cart = serializers.BooleanField(read_only=True)
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -125,6 +126,16 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             "text",
             "cooking_time",
         )
+
+    def get_is_favorited(self, obj):
+        return Favorite.objects.filter(
+            recipe=obj, user=self.context.get("request").user
+        ).exists()
+
+    def get_is_in_shopping_cart(self, obj):
+        return ShoppingList.objects.filter(
+            recipe=obj, user=self.context.get("request").user
+        ).exists()
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
