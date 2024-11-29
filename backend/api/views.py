@@ -117,19 +117,18 @@ class CustomUserViewSet(UserViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = SubscriberSerializer(
-                data={"user": user.id, "author": author.id},
-                context={"request": request},
+            subscription = Subscription.objects.create(
+                user=user, author=author
             )
-            serializer.is_valid(raise_exception=True)
-            subscription = serializer.save()
-
-            recipes_count = Recipe.objects.filter(author=author).count()
-            response_data = SubscriberDetailSerializer(
-                subscription,
-                context={"request": request},
-            ).data
-            response_data["recipes_count"] = recipes_count
+            queryset = (
+                Subscription.objects.filter(id=subscription.id)
+                .annotate(recipes_count=Count("author__recipes"))
+                .first()
+            )
+            serializer = SubscriberDetailSerializer(
+                queryset, context={"request": request}
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         elif self.request.method == "DELETE":
             if not User.objects.filter(id=id).exists():
