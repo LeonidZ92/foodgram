@@ -293,23 +293,6 @@ class SubscriberDetailSerializer(serializers.ModelSerializer):
         ).data
 
 
-class SubscriberSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Subscription
-        fields = fields = ["user", "author"]
-
-    def to_representation(self, instance):
-        return SubscriberDetailSerializer(instance, context=self.context).data
-
-    def validate_author(self, value):
-        if self.context["request"].user == value:
-            raise serializers.ValidationError(
-                "Вы не можете подписаться на себя"
-            )
-        return value
-
-
 class FavoriteRecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
 

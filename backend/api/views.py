@@ -27,7 +27,6 @@ from api.serializers import (
     RecipeReadSerializer,
     RecipeWriteSerializer,
     SubscriberDetailSerializer,
-    SubscriberSerializer,
     TagSerializer,
 )
 from recipes.models import (
