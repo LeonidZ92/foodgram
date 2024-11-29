@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Sum
+from django.db.models import Count, Exists, OuterRef, Sum
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_GET
@@ -178,6 +178,34 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.action in ("list", "retrieve", "get-link"):
             return RecipeReadSerializer
         return RecipeWriteSerializer
+
+    def get_queryset(self):
+        queryset = (
+            super().get_queryset()
+            .annotate(
+                is_favorited=Exists(
+                    Favorite.objects.filter(
+                        recipe_id=OuterRef("id"), user=self.request.user
+                    )
+                ),
+                is_in_shopping_cart=Exists(
+                    ShoppingList.objects.filter(
+                        recipe_id=OuterRef("id"), user=self.request.user
+                    )
+                ),
+            )
+        )
+        return queryset
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update(
+            {
+                "is_favorited": self.request.user.is_authenticated,
+                "is_in_shopping_cart": self.request.user.is_authenticated,
+            }
+        )
+        return context
 
     @action(
         detail=True,
