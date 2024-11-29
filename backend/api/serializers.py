@@ -6,11 +6,9 @@ from drf_extra_fields.fields import Base64ImageField
 
 from foodgram import constants
 from recipes.models import (
-    Favorite,
     Ingredient,
     Recipe,
     RecipeIngredient,
-    ShoppingList,
     Tag,
 )
 from users.models import Subscription
