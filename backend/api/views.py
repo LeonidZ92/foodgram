@@ -203,10 +203,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name="shopping_cart",
     )
     def shopping_cart(self, request, pk):
-        if not request.user.is_authenticated:
-            raise NotAuthenticated(
-                "Требуется аутентификация для выполнения этого действия."
-            )
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == "POST":
@@ -270,10 +266,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name="favorite",
     )
     def favorite(self, request, pk):
-        if not request.user.is_authenticated:
-            raise NotAuthenticated(
-                "Требуется аутентификация для выполнения этого действия."
-            )
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == "POST":

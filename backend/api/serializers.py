@@ -14,6 +14,7 @@ from recipes.models import (
     Tag,
 )
 from users.models import Subscription
+from .utils import get_serializer_method_field_value
 
 
 User = get_user_model()
@@ -127,15 +128,15 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             "cooking_time",
         )
 
-    def get_is_favorited(self, obj):
-        return Favorite.objects.filter(
-            recipe=obj, user=self.context.get("request").user
-        ).exists()
+    def get_is_favorited(self, recipe):
+        return get_serializer_method_field_value(
+            self.context, Favorite, recipe, 'user_id', 'recipe'
+        )
 
-    def get_is_in_shopping_cart(self, obj):
-        return ShoppingList.objects.filter(
-            recipe=obj, user=self.context.get("request").user
-        ).exists()
+    def get_is_in_shopping_cart(self, recipe):
+        return get_serializer_method_field_value(
+            self.context, ShoppingList, recipe, 'user_id', 'recipe'
+        )
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
