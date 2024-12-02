@@ -267,6 +267,12 @@ class SubscriberDetailSerializer(serializers.ModelSerializer):
             "avatar",
         )
 
+    def create(self, validated_data):
+        user = validated_data["user"]
+        author = validated_data["author"]
+        subscription = Subscription.objects.create(user=user, author=author)
+        return subscription
+
     def get_is_subscribed(self, obj):
         user = self.context.get("request").user
         return Subscription.objects.filter(
