@@ -235,6 +235,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
@@ -289,8 +290,7 @@ class SubscriberDetailSerializer(serializers.ModelSerializer):
 
 
 class FavoriteRecipeSerializer(serializers.ModelSerializer):
-    image = Base64ImageField()
 
     class Meta:
-        model = Recipe
-        fields = ("id", "name", "image", "cooking_time")
+        model = Favorite
+        fields = ("id", "user", "recipe")
