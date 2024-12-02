@@ -1,10 +1,13 @@
 def get_serializer_method_field_value(
-        context, model, obj, field_1, field_2
+    context, model, obj, user_field, object_field
 ):
     return (
         context
-        and context['request'].user.is_authenticated
+        and context["request"].user.is_authenticated
         and model.objects.filter(
-            **{f'{field_1}': context['request'].user.id, f'{field_2}': obj}
+            **{
+                f"{user_field}": context["request"].user.id,
+                f"{object_field}": obj,
+            }
         ).exists()
     )

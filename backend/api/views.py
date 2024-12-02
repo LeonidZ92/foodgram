@@ -1,21 +1,3 @@
-from django.contrib.auth import get_user_model
-from django.db.models import Count, Sum
-from django.http import HttpResponse, Http404
-from django.shortcuts import get_object_or_404, redirect
-from django.views.decorators.http import require_GET
-
-from django_filters.rest_framework import DjangoFilterBackend
-from djoser.views import UserViewSet
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
-from rest_framework.permissions import (
-    AllowAny,
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-)
-from rest_framework.response import Response
-from rest_framework.reverse import reverse
-
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import CustomLimitPagination
 from api.permissions import IsAdminAuthorOrReadOnly
@@ -29,6 +11,13 @@ from api.serializers import (
     SubscriberDetailSerializer,
     TagSerializer,
 )
+from django.contrib.auth import get_user_model
+from django.db.models import Count, Sum
+from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.http import require_GET
+from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
 from recipes.models import (
     Favorite,
     Ingredient,
@@ -37,6 +26,15 @@ from recipes.models import (
     ShoppingList,
     Tag,
 )
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 from users.models import Subscription
 
 User = get_user_model()

@@ -1,10 +1,6 @@
 from django.contrib.auth import get_user_model
-from rest_framework import serializers
-
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
-
-from foodgram import constants
 from recipes.models import (
     Favorite,
     Ingredient,
@@ -13,9 +9,12 @@ from recipes.models import (
     ShoppingList,
     Tag,
 )
+from rest_framework import serializers
 from users.models import Subscription
-from .utils import get_serializer_method_field_value
 
+from foodgram import constants
+
+from .utils import get_serializer_method_field_value
 
 User = get_user_model()
 
@@ -130,12 +129,12 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, recipe):
         return get_serializer_method_field_value(
-            self.context, Favorite, recipe, 'user_id', 'recipe'
+            self.context, Favorite, recipe, "user_id", "recipe"
         )
 
     def get_is_in_shopping_cart(self, recipe):
         return get_serializer_method_field_value(
-            self.context, ShoppingList, recipe, 'user_id', 'recipe'
+            self.context, ShoppingList, recipe, "user_id", "recipe"
         )
 
 
@@ -173,16 +172,17 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     def validate_ingredients(self, value):
         if not value:
-            raise serializers.ValidationError("Добавьте ингридиент")
+            raise serializers.ValidationError("Добавьте ингредиент")
+
         ingredient_ids = [ingredient["id"] for ingredient in value]
-        existing_ingredients = Ingredient.objects.filter(id__in=ingredient_ids)
-        if len(existing_ingredients) != len(ingredient_ids):
-            missing_ids = set(ingredient_ids) - set(
-                existing_ingredients.values_list("id", flat=True)
-            )
+        existing_ingredient_count = Ingredient.objects.filter(
+            id__in=ingredient_ids
+        ).count()
+        if existing_ingredient_count != len(ingredient_ids):
             raise serializers.ValidationError(
-                f"Ингредиенты с идентификатором {missing_ids} не существуют"
+                "Один или несколько ингредиентов не существуют"
             )
+
         return value
 
     def validate_image(self, value):

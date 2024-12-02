@@ -1,8 +1,8 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from users.models import User
 
 from foodgram import constants
-from users.models import User
 
 
 class Ingredient(models.Model):
@@ -12,12 +12,10 @@ class Ingredient(models.Model):
         max_length=constants.INGREDIENT_NAME_MAX_LENGTH,
         unique=True,
         verbose_name="Название ингредиента",
-        help_text="Введите название ингредиента",
     )
     measurement_unit = models.CharField(
         max_length=constants.MEASUREMENT_UNIT_MAX_LENGTH,
         verbose_name="Единица измерения",
-        help_text="Введите единицу измерения для ингредиента",
     )
 
     class Meta:
@@ -41,13 +39,11 @@ class Tag(models.Model):
     name = models.CharField(
         max_length=constants.TAG_NAME_MAX_LENGTH,
         verbose_name="Название тега",
-        help_text="Введите название тега",
     )
     slug = models.SlugField(
         max_length=constants.TAG_SLUG_MAX_LENGTH,
         unique=True,
         verbose_name="Идентификатор",
-        help_text="Введите уникальный идентификатор для тега",
     )
 
     class Meta:
@@ -64,18 +60,15 @@ class Recipe(models.Model):
     name = models.CharField(
         max_length=constants.RECIPE_NAME_MAX_LENGTH,
         verbose_name="Название рецепта",
-        help_text="Введите название рецепта",
     )
     text = models.TextField(
         verbose_name="Описание рецепта",
-        help_text="Введите описание или пошаговые инструкции рецепта",
     )
     ingredients = models.ManyToManyField(
         Ingredient,
         through="RecipeIngredient",
         related_name="recipes",
         verbose_name="Ингредиенты рецепта",
-        help_text="Выберите или добавьте ингредиенты для рецепта",
     )
     cooking_time = models.PositiveSmallIntegerField(
         validators=(
@@ -89,11 +82,9 @@ class Recipe(models.Model):
             ),
         ),
         verbose_name="Время приготовления (минут)",
-        help_text="Укажите время приготовления в минутах",
     )
     image = models.ImageField(
         verbose_name="Изображение рецепта",
-        help_text="Загрузите изображение готового блюда",
         upload_to="media/recipes/",
     )
     author = models.ForeignKey(
@@ -106,7 +97,6 @@ class Recipe(models.Model):
         Tag,
         related_name="recipes",
         verbose_name="Теги рецепта",
-        help_text="Выберите теги для классификации рецепта",
     )
 
     class Meta:
@@ -126,14 +116,12 @@ class RecipeIngredient(models.Model):
         on_delete=models.CASCADE,
         related_name="ingredient_list",
         verbose_name="Рецепт",
-        help_text="Рецепт, в котором используется ингредиент",
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
         related_name="ingredient_recipe",
         verbose_name="Ингредиент",
-        help_text="Ингредиент, который используется в рецепте",
     )
     amount = models.PositiveSmallIntegerField(
         validators=(
@@ -147,7 +135,6 @@ class RecipeIngredient(models.Model):
             ),
         ),
         verbose_name="Количество",
-        help_text="Укажите количество ингредиента",
     )
 
     class Meta:
@@ -173,14 +160,12 @@ class Favorite(models.Model):
         on_delete=models.CASCADE,
         related_name="favorite",
         verbose_name="Пользователь",
-        help_text="Пользователь, добавивший рецепт в избранное",
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         related_name="favorite",
         verbose_name="Рецепт",
-        help_text="Рецепт, добавленный в избранное",
     )
 
     class Meta:
@@ -206,14 +191,12 @@ class ShoppingList(models.Model):
         on_delete=models.CASCADE,
         related_name="shopping_list",
         verbose_name="Пользователь",
-        help_text="Пользователь, добавивший рецепт в список покупок",
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         related_name="shopping_list",
         verbose_name="Рецепт",
-        help_text="Рецепт, добавленный в список покупок",
     )
 
     class Meta:
