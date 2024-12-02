@@ -128,6 +128,11 @@ class CustomUserViewSet(UserViewSet):
             )
 
         elif request.method == "DELETE":
+            if not User.objects.filter(id=id).exists():
+                return Response(
+                    {"errors": "Пользователь с данным ID не найден"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
             deleted_count, _ = Subscription.objects.filter(
                 user=user, author_id=id
             ).delete()
