@@ -118,9 +118,9 @@ class CustomUserViewSet(UserViewSet):
                 data=data, context={"request": request}
             )
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            subscription = serializer.save()
             response_serializer = SubscriberDetailSerializer(
-                author, context={"request": request}
+                subscription, context={"request": request}
             )
             return Response(
                 response_serializer.data, status=status.HTTP_201_CREATED
@@ -133,7 +133,7 @@ class CustomUserViewSet(UserViewSet):
             if deleted_count == 0:
                 return Response(
                     {"errors": "Вы не подписаны на данного пользователя"},
-                    status=status.HTTP_400_BAD_REQUEST,
+                    status=status.HTTP_404_NOT_FOUND,
                 )
             return Response(status=status.HTTP_204_NO_CONTENT)
 
