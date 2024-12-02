@@ -4,10 +4,10 @@ from api.permissions import IsAdminAuthorOrReadOnly
 from api.serializers import (
     AvatarSerializer,
     CustomUserSerializer,
-    FavoriteRecipeSerializer,
     IngredientSerializer,
     RecipeReadSerializer,
     RecipeWriteSerializer,
+    ShortRecipeSerializer,
     SubscriberDetailSerializer,
     TagSerializer,
 )
@@ -212,7 +212,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             ShoppingList.objects.create(recipe=recipe, user=user)
-            serializer = FavoriteRecipeSerializer(
+            serializer = ShortRecipeSerializer(
                 recipe, context={"request": request}
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -275,7 +275,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             Favorite.objects.create(recipe=recipe, user=user)
-            serializer = FavoriteRecipeSerializer(
+            serializer = ShortRecipeSerializer(
                 recipe, context={"request": request}
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
