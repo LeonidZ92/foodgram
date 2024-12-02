@@ -114,17 +114,14 @@ class CustomUserViewSet(UserViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            data = {"user": user.id, "author": author.id}
+            data = {"user": user, "author": author}
             serializer = SubscriberDetailSerializer(
                 data=data, context={"request": request}
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            response_serializer = SubscriberDetailSerializer(
-                author, context={"request": request}
-            )
             return Response(
-                response_serializer.data, status=status.HTTP_201_CREATED
+                serializer.data, status=status.HTTP_201_CREATED
             )
 
         elif request.method == "DELETE":
