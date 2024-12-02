@@ -242,6 +242,12 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "image", "cooking_time")
 
 
+class SubscriptionCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ("user", "author")
+
+
 class SubscriberDetailSerializer(serializers.ModelSerializer):
     email = serializers.ReadOnlyField(source="author.email")
     id = serializers.ReadOnlyField(source="author.id")

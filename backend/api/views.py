@@ -8,6 +8,7 @@ from api.serializers import (
     RecipeReadSerializer,
     RecipeWriteSerializer,
     ShortRecipeSerializer,
+    SubscriptionCreateSerializer,
     SubscriberDetailSerializer,
     TagSerializer,
 )
@@ -100,50 +101,40 @@ class CustomUserViewSet(UserViewSet):
     def subscribe(self, request, id):
         user = request.user
 
-        if self.request.method == "POST":
+        if request.method == "POST":
             author = get_object_or_404(User, id=id)
             if user == author:
                 return Response(
                     {"errors": "Вы не можете подписаться на себя"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
             if Subscription.objects.filter(user=user, author=author).exists():
                 return Response(
                     {"errors": "Вы уже подписаны на этого пользователя"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-            subscription = Subscription.objects.create(
-                user=user, author=author
+            data = {"user": user.id, "author": author.id}
+            serializer = SubscriptionCreateSerializer(
+                data=data, context={"request": request}
             )
-            queryset = (
-                Subscription.objects.filter(id=subscription.id)
-                .annotate(recipes_count=Count("author__recipes"))
-                .first()
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            response_serializer = SubscriberDetailSerializer(
+                author, context={"request": request}
             )
-            serializer = SubscriberDetailSerializer(
-                queryset, context={"request": request}
+            return Response(
+                response_serializer.data, status=status.HTTP_201_CREATED
             )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        elif self.request.method == "DELETE":
-            if not User.objects.filter(id=id).exists():
-                return Response(
-                    {"errors": "Пользователь с данным ID не найден"},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-
+        elif request.method == "DELETE":
             deleted_count, _ = Subscription.objects.filter(
                 user=user, author_id=id
             ).delete()
-
             if deleted_count == 0:
                 return Response(
                     {"errors": "Вы не подписаны на данного пользователя"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 
