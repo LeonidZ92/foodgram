@@ -114,16 +114,13 @@ class CustomUserViewSet(UserViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             data = {"user": user.id, "author": author.id}
-            serializer = SubscriptionCreateSerializer(
+            serializer = SubscriberDetailSerializer(
                 data=data, context={"request": request}
             )
             serializer.is_valid(raise_exception=True)
             subscription = serializer.save()
-            response_serializer = SubscriberDetailSerializer(
-                subscription, context={"request": request}
-            )
             return Response(
-                response_serializer.data, status=status.HTTP_201_CREATED
+                subscription.data, status=status.HTTP_201_CREATED
             )
 
         elif request.method == "DELETE":
@@ -133,7 +130,7 @@ class CustomUserViewSet(UserViewSet):
             if deleted_count == 0:
                 return Response(
                     {"errors": "Вы не подписаны на данного пользователя"},
-                    status=status.HTTP_404_NOT_FOUND,
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
             return Response(status=status.HTTP_204_NO_CONTENT)
 
