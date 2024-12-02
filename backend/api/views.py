@@ -8,7 +8,6 @@ from api.serializers import (
     RecipeReadSerializer,
     RecipeWriteSerializer,
     ShortRecipeSerializer,
-    SubscriptionCreateSerializer,
     SubscriberDetailSerializer,
     TagSerializer,
 )
