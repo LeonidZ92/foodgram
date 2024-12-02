@@ -114,7 +114,7 @@ class CustomUserViewSet(UserViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            data = {"user": user, "author": author}
+            data = {"user": user.id, "author": author.id}
             serializer = SubscriberDetailSerializer(
                 data=data, context={"request": request}
             )
