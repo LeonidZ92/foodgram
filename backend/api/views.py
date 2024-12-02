@@ -118,11 +118,19 @@ class CustomUserViewSet(UserViewSet):
             )
             serializer.is_valid(raise_exception=True)
             subscription = serializer.save()
+            response_serializer = SubscriberDetailSerializer(
+                subscription, context={"request": request}
+            )
             return Response(
-                subscription.data, status=status.HTTP_201_CREATED
+                response_serializer.data, status=status.HTTP_201_CREATED
             )
 
         elif request.method == "DELETE":
+            if not User.objects.filter(id=id).exists():
+                return Response(
+                    {"errors": "Пользователь с данным ID не найден"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
             deleted_count, _ = Subscription.objects.filter(
                 user=user, author_id=id
             ).delete()
