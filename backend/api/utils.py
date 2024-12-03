@@ -3,7 +3,6 @@ def get_serializer_method_field_value(
 ):
     return (
         context
-        and context["request"].user.is_authenticated
         and model.objects.filter(
             **{
                 f"{user_field}": context["request"].user.id,
