@@ -328,8 +328,43 @@ class SubscriberDetailSerializer(serializers.ModelSerializer):
         ).data
 
 
-class FavoriteRecipeSerializer(serializers.ModelSerializer):
+class ShoppingCartCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShoppingList
+        fields = ("id", "user", "recipe")
+        read_only_fields = ("id",)
 
+    def validate(self, data):
+        user = self.context["request"].user
+        recipe = data.get("recipe")
+
+        if ShoppingList.objects.filter(user=user, recipe=recipe).exists():
+            raise serializers.ValidationError(
+                f'Рецепт "{recipe.name}" уже добавлен в список покупок.'
+            )
+
+        return data
+
+    def create(self, validated_data):
+        return ShoppingList.objects.create(**validated_data)
+
+
+class FavoriteCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ("id", "user", "recipe")
+        read_only_fields = ("id",)
+
+    def validate(self, data):
+        user = self.context["request"].user
+        recipe = data.get("recipe")
+
+        if Favorite.objects.filter(user=user, recipe=recipe).exists():
+            raise serializers.ValidationError(
+                f'Рецепт "{recipe.name}" уже добавлен в избранное.'
+            )
+
+        return data
+
+    def create(self, validated_data):
+        return Favorite.objects.create(**validated_data)
