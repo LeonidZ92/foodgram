@@ -255,7 +255,7 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
 
 
 class SubscriberCreateSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = Subscription
         fields = ("id", "user", "author")
@@ -265,12 +265,16 @@ class SubscriberCreateSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         user = request.user
         author = data.get("author")
-        
+
         if user == author:
-            raise serializers.ValidationError("Вы не можете подписаться на себя")
+            raise serializers.ValidationError(
+                "Вы не можете подписаться на себя"
+            )
         if Subscription.objects.filter(user=user, author=author).exists():
-            raise serializers.ValidationError("Вы уже подписаны на этого пользователя")
-        
+            raise serializers.ValidationError(
+                "Вы уже подписаны на этого пользователя"
+            )
+
         return data
 
     def create(self, validated_data):

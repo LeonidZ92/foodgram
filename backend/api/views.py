@@ -104,7 +104,9 @@ class CustomUserViewSet(UserViewSet):
         if self.request.method == "POST":
             author = get_object_or_404(User, id=id)
             data = {"user": user.id, "author": author.id}
-            serializer = SubscriberCreateSerializer(data=data, context={"request": request})
+            serializer = SubscriberCreateSerializer(
+                data=data, context={"request": request}
+            )
             if serializer.is_valid():
                 serializer.save()
                 queryset = (
@@ -112,9 +114,15 @@ class CustomUserViewSet(UserViewSet):
                     .annotate(recipes_count=Count("author__recipes"))
                     .first()
                 )
-                serializer = SubscriberDetailSerializer(queryset, context={"request": request})
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                serializer = SubscriberDetailSerializer(
+                    queryset, context={"request": request}
+                )
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
 
         elif request.method == "DELETE":
             if not User.objects.filter(id=id).exists():
