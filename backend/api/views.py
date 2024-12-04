@@ -224,7 +224,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if deleted_count == 0:
                 return Response(
                     {
-                        "detail": f'Рецепт "{recipe.name}" отсутствует в списке покупок.'
+                        "detail": f'Рецепт "{recipe.name}" не найден в покупках.'
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
