@@ -8,6 +8,7 @@ from api.serializers import (
     RecipeReadSerializer,
     RecipeWriteSerializer,
     ShortRecipeSerializer,
+    SubscriberCreateSerializer,
     SubscriberDetailSerializer,
     TagSerializer,
 )
@@ -102,30 +103,18 @@ class CustomUserViewSet(UserViewSet):
 
         if self.request.method == "POST":
             author = get_object_or_404(User, id=id)
-            if user == author:
-                return Response(
-                    {"errors": "Вы не можете подписаться на себя"},
-                    status=status.HTTP_400_BAD_REQUEST,
+            data = {"user": user.id, "author": author.id}
+            serializer = SubscriberCreateSerializer(data=data, context={"request": request})
+            if serializer.is_valid():
+                serializer.save()
+                queryset = (
+                    Subscription.objects.filter(id=serializer.instance.id)
+                    .annotate(recipes_count=Count("author__recipes"))
+                    .first()
                 )
-
-            if Subscription.objects.filter(user=user, author=author).exists():
-                return Response(
-                    {"errors": "Вы уже подписаны на этого пользователя"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            subscription = Subscription.objects.create(
-                user=user, author=author
-            )
-            queryset = (
-                Subscription.objects.filter(id=subscription.id)
-                .annotate(recipes_count=Count("author__recipes"))
-                .first()
-            )
-            serializer = SubscriberDetailSerializer(
-                queryset, context={"request": request}
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                serializer = SubscriberDetailSerializer(queryset, context={"request": request})
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         elif request.method == "DELETE":
             if not User.objects.filter(id=id).exists():
@@ -183,9 +172,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def get_link(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
-        rev_link = reverse("short_url", args=[recipe.pk])
+        reverse_link = reverse("short_url", args=[recipe.pk])
         return Response(
-            {"short-link": request.build_absolute_uri(rev_link)},
+            {"short-link": request.build_absolute_uri(reverse_link)},
             status=status.HTTP_200_OK,
         )
 

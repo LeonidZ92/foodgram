@@ -2,7 +2,9 @@ import base64
 
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
+from rest_framework import serializers
 from djoser.serializers import UserCreateSerializer, UserSerializer
+
 from recipes.models import (
     Favorite,
     Ingredient,
@@ -11,9 +13,7 @@ from recipes.models import (
     ShoppingList,
     Tag,
 )
-from rest_framework import serializers
 from users.models import Subscription
-
 from foodgram import constants
 
 from .utils import get_serializer_method_field_value
@@ -252,6 +252,29 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ("id", "name", "image", "cooking_time")
+
+
+class SubscriberCreateSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Subscription
+        fields = ("id", "user", "author")
+        read_only_fields = ("id",)
+
+    def validate(self, data):
+        request = self.context.get("request")
+        user = request.user
+        author = data.get("author")
+        
+        if user == author:
+            raise serializers.ValidationError("Вы не можете подписаться на себя")
+        if Subscription.objects.filter(user=user, author=author).exists():
+            raise serializers.ValidationError("Вы уже подписаны на этого пользователя")
+        
+        return data
+
+    def create(self, validated_data):
+        return Subscription.objects.create(**validated_data)
 
 
 class SubscriberDetailSerializer(serializers.ModelSerializer):
