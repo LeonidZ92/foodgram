@@ -23,10 +23,20 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "text", "author")
-    search_fields = ("name", "author")
+    list_display = ("author", "name", "text")
+    list_display_links = ("author", "name")
+    list_filter = ("tags", "author")
     inlines = (RecipeIngredientsInLine, RecipeTagsInLine)
     empty_value_display = "-пусто-"
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return (
+            queryset
+            .select_related("author")
+            .prefetch_related("tags")
+            .prefetch_related("ingredient_list__ingredient")
+        )
 
 
 @admin.register(Tag)
