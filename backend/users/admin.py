@@ -24,14 +24,12 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "author",
     )
     list_display_links = (
-        "user_username",
-        "author_username",
+        "user",
+        "author",
     )
     search_fields = (
-        "user__username",
-        "user__email",
-        "author__username",
-        "author__email",
+        "user",
+        "author",
     )
     empty_value_display = "-пусто-"
 
