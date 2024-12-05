@@ -19,8 +19,9 @@ class UserAdmin(BaseUserAdmin):
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
     list_display = (
-        "user_username",
-        "author_username",
+        "id",
+        "user",
+        "author",
     )
     list_display_links = (
         "user_username",
@@ -37,9 +38,3 @@ class SubscriptionAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         return queryset.select_related("user", "author")
-
-    def user_username(self, obj):
-        return obj.user.username
-
-    def author_username(self, obj):
-        return obj.author.username
