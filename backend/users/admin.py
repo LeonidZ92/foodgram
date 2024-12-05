@@ -21,9 +21,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user_username",
-        "user__email",
         "author_username",
-        "author__email",
     )
     list_display_links = (
         "user_username",
@@ -31,9 +29,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     )
     search_fields = (
         "user__username",
-        "user__email",
         "author__username",
-        "author__email",
     )
     empty_value_display = "-пусто-"
 
