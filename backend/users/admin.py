@@ -20,19 +20,29 @@ class UserAdmin(BaseUserAdmin):
 class SubscriptionAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "user",
-        "author",
+        "user_username",
+        "author_username",
     )
     list_display_links = (
-        "user",
-        "author",
+        "user_username",
+        "author_username",
     )
     search_fields = (
-        "user",
-        "author",
+        "user__username",
+        "user__email",
+        "author__username",
+        "author__email",
     )
     empty_value_display = "-пусто-"
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         return queryset.select_related("user", "author")
+
+    @admin.display(description="Подписчик")
+    def user_username(self, obj):
+        return obj.user.username
+
+    @admin.display(description="Автор")
+    def author_username(self, obj):
+        return obj.author.username
