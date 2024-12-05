@@ -21,7 +21,9 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user_username",
+        "user__email",
         "author_username",
+        "author__email",
     )
     list_display_links = (
         "user_username",
